@@ -1,0 +1,85 @@
+{
+  "name": "GastroGlobe Foodie Tour",
+  "description": "Checks weather, picks local dishes, finds restaurants, and crafts a food tour.",
+  "inputs": [
+    {
+      "name": "cities",
+      "type": "list",
+      "example": ["Mumbai", "Paris", "Tokyo"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "city_loop",
+      "type": "loop",
+      "input": "cities",
+      "steps": [
+        {
+          "id": "get_coordinates",
+          "type": "geocoding",
+          "provider": "open-meteo",
+          "input": "{{item}}",
+          "output": "coordinates"
+        },
+        {
+          "id": "fetch_weather",
+          "type": "http_request",
+          "method": "GET",
+          "url": "https://api.open-meteo.com/v1/forecast?latitude={{coordinates.lat}}&longitude={{coordinates.lon}}&current_weather=true",
+          "output": "weather_data"
+        },
+        {
+          "id": "determine_dining_mode",
+          "type": "code",
+          "language": "python",
+          "code": "mode = 'outdoor' if weather_data['current_weather']['weathercode'] in [0, 1, 2] else 'indoor'\nreturn {'dining_mode': mode}"
+        },
+        {
+          "id": "get_dishes",
+          "type": "lookup",
+          "table": "dishes_db.json",
+          "key": "{{item}}",
+          "output": "dishes"
+        },
+        {
+          "id": "restaurant_search",
+          "type": "loop",
+          "input": "dishes",
+          "steps": [
+            {
+              "id": "mock_search",
+              "type": "lookup",
+              "table": "mock_restaurant_data.json",
+              "key": "{{item}}",
+              "output": "restaurant"
+            }
+          ]
+        },
+        {
+          "id": "generate_story",
+          "type": "code",
+          "language": "python",
+          "code": "breakfast = f'Enjoy a {dishes[0]} for breakfast at {restaurant_search[0]['restaurant']['name']}, a great spot for {dining_mode} dining in {{item}}.'\nlunch = f'For lunch, try the iconic {dishes[1]} at {restaurant_search[1]['restaurant']['name']}.'\ndinner = f'End your day with a cozy dinner featuring {dishes[2]} at {restaurant_search[2]['restaurant']['name']}.'\nreturn {'breakfast': breakfast, 'lunch': lunch, 'dinner': dinner}"
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "type": "list",
+    "items": {
+      "type": "object",
+      "properties": {
+        "city": "string",
+        "dining_mode": "string",
+        "tour": {
+          "type": "object",
+          "properties": {
+            "breakfast": "string",
+            "lunch": "string",
+            "dinner": "string"
+          }
+        }
+      }
+    }
+  }
+}

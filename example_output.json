@@ -1,0 +1,20 @@
+[
+  {
+    "city": "Mumbai",
+    "dining_mode": "outdoor",
+    "tour": {
+      "breakfast": "Enjoy a Vada Pav for breakfast at Ashok Vada Pav, a great spot for outdoor dining in Mumbai.",
+      "lunch": "For lunch, try the iconic Pav Bhaji at Sardar Pav Bhaji.",
+      "dinner": "End your day with a cozy dinner featuring Misal Pav at Mamledar Misal."
+    }
+  },
+  {
+    "city": "Paris",
+    "dining_mode": "indoor",
+    "tour": {
+      "breakfast": "Enjoy a Croissant for breakfast at Du Pain et des Idées, a great spot for indoor dining in Paris.",
+      "lunch": "For lunch, try the iconic Boeuf Bourguignon at Chez Janou.",
+      "dinner": "End your day with a cozy dinner featuring Crème brûlée at Le Comptoir du Relais."
+    }
+  }
+]
